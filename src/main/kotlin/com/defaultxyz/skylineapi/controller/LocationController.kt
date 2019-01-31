@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class LocationController(val repository: LocationRepository) {
 
+    @GetMapping("/location/all")
+    fun getAllLocations(): List<Location> = repository.findAll()
+
     @GetMapping("/location/user")
-    fun findByEmail(@Param("email") email: String): List<Location> = repository.findByCreatorEmail(email)
+    fun getLocationByEmail(@Param("email") email: String): List<Location> = repository.findByCreatorEmail(email)
 }
