@@ -1,6 +1,8 @@
 package com.defaultxyz.skylineapi.repository
 
 import com.defaultxyz.skylineapi.model.Review
-import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.repository.CrudRepository
 
-interface ReviewRepository: JpaRepository<Review, Int>
+interface ReviewRepository : CrudRepository<Review, Int> {
+
+}

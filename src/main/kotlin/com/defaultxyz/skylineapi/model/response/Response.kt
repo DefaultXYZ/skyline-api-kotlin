@@ -1,4 +1,4 @@
-package com.defaultxyz.skylineapi.model
+package com.defaultxyz.skylineapi.model.response
 
 data class Response<T : Any>(
         val message: String,
