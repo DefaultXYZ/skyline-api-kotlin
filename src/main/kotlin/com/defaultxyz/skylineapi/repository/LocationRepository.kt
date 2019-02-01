@@ -1,8 +1,9 @@
 package com.defaultxyz.skylineapi.repository
 
-import com.defaultxyz.skylineapi.model.Location
-import org.springframework.data.repository.CrudRepository
+import com.defaultxyz.skylineapi.model.LocationEntity
+import org.springframework.data.jpa.repository.JpaRepository
 
-interface LocationRepository : CrudRepository<Location, Int> {
-    fun findByName(name: String): Location?
+interface LocationRepository : JpaRepository<LocationEntity, Int> {
+
+    fun findByNameIgnoreCase(name: String): LocationEntity?
 }

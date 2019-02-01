@@ -3,13 +3,41 @@ package com.defaultxyz.skylineapi.model
 import javax.persistence.*
 
 @Entity(name = "t_review")
-data class Review(
-        @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id: Int?,
+data class ReviewEntity(
+        @Id @GeneratedValue(strategy = GenerationType.IDENTITY) val id: Int? = null,
         val text: String,
         val rating: Int,
-        @Column(name = "location_id") var locationId: Int?,
+        @Column(name = "location_id") val locationId: Int,
+        @Column(name = "user_id") val userId: Int
+)
 
-        @ManyToOne
-        @JoinColumn(name = "user_id")
-        var user: User? = null
+data class SimpleReviewModel(
+        val text: String,
+        val rating: Int
+)
+
+data class ReviewModel(
+        val text: String,
+        val rating: Int,
+        val locationName: String,
+        val userEmail: String
+)
+
+fun ReviewModel.toEntity(userId: Int, locationId: Int) = ReviewEntity(
+        text = text,
+        rating = rating,
+        locationId = locationId,
+        userId = userId
+)
+
+fun SimpleReviewModel.toEntity(userId: Int, locationId: Int) = ReviewEntity(
+        text = text,
+        rating = rating,
+        locationId = locationId,
+        userId = userId
+)
+
+
+fun ReviewEntity.toModel(userEmail: String, locationName: String) = ReviewModel(
+        text, rating, locationName, userEmail
 )

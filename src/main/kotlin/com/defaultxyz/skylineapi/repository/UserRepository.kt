@@ -1,9 +1,9 @@
 package com.defaultxyz.skylineapi.repository
 
-import com.defaultxyz.skylineapi.model.User
-import org.springframework.data.repository.CrudRepository
+import com.defaultxyz.skylineapi.model.UserEntity
+import org.springframework.data.jpa.repository.JpaRepository
 
-interface UserRepository : CrudRepository<User, Int> {
+interface UserRepository : JpaRepository<UserEntity, Int> {
 
-    fun findByEmail(email: String): User?
+    fun findByEmailIgnoreCase(email: String): UserEntity?
 }
