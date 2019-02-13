@@ -38,7 +38,11 @@ class AppRestController(
     @GetMapping("/location/all")
     fun getAllLocations() = Response(
             "Locations loaded successfully",
-            locationRepository.findAll().map(LocationEntity::toModel)
+            locationRepository.findAll().mapNotNull { locationEntity ->
+                userRepository.findById(locationEntity.userId).takeIf { it.isPresent }?.get()?.let { userEntity ->
+                    locationEntity.toModel(userEntity.firstName)
+                }
+            }
     )
 
     @PostMapping("/location/new")
@@ -68,7 +72,7 @@ class AppRestController(
                     ?.takeNonEmpty()
                     ?.let { (user, location) ->
                         location.id?.let { reviewRepository.findAllByLocationId(it) }
-                                ?.map { it.toModel(user.email, location.name) }
+                                ?.map { it.toModel(user.firstName, location.name) }
                     }?.let { Response("Reviews loaded successfully", it) }
                     ?: Response("Error on load reviews", emptyList())
 
@@ -82,7 +86,7 @@ class AppRestController(
             userRepository.findByEmailIgnoreCase(email)?.id?.let { userId -> toEntity(userId) }
 
     private fun ReviewModel.toEntityOrNull() =
-            (userRepository.findByEmailIgnoreCase(userEmail) to locationRepository.findByNameIgnoreCase(locationName))
+            (userRepository.findByEmailIgnoreCase(userName) to locationRepository.findByNameIgnoreCase(locationName))
                     .takeNonEmpty()
                     ?.let { (user, location) -> user.id to location.id }
                     ?.takeNonEmpty()
@@ -91,6 +95,6 @@ class AppRestController(
     private fun ReviewEntity.toModelOrNull() =
             (userRepository.findByIdOrNull(userId) to locationRepository.findByIdOrNull(locationId))
                     .takeNonEmpty()
-                    ?.let { (user, location) -> toModel(user.email, location.name) }
+                    ?.let { (user, location) -> toModel(user.firstName, location.name) }
 
 }

@@ -14,7 +14,8 @@ data class LocationEntity(
 data class LocationModel(
         val name: String,
         val latitude: Double,
-        val longitude: Double
+        val longitude: Double,
+        val userName: String
 )
 
 data class NewLocationModel(
@@ -22,7 +23,7 @@ data class NewLocationModel(
         val review: SimpleReviewModel
 )
 
-fun LocationEntity.toModel() = LocationModel(name, latitude, longitude)
+fun LocationEntity.toModel(userName: String) = LocationModel(name, latitude, longitude, userName)
 
 fun LocationModel.toEntity(userId: Int) = LocationEntity(
         name = name,
