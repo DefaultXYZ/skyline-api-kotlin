@@ -23,7 +23,21 @@ data class ReviewModel(
         val userName: String
 )
 
+data class AddReviewModel(
+        val text: String,
+        val rating: Int,
+        val locationName: String,
+        val userEmail: String
+)
+
 fun ReviewModel.toEntity(userId: Int, locationId: Int) = ReviewEntity(
+        text = text,
+        rating = rating,
+        locationId = locationId,
+        userId = userId
+)
+
+fun AddReviewModel.toEntity(userId: Int, locationId: Int) = ReviewEntity(
         text = text,
         rating = rating,
         locationId = locationId,

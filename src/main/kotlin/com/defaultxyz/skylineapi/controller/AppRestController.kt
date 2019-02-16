@@ -68,16 +68,19 @@ class AppRestController(
     @GetMapping("/review/all")
     fun getAllReviewsByLocationName(name: String) =
             locationRepository.findByNameIgnoreCase(name)
-                    ?.let { location -> userRepository.findByIdOrNull(location.userId) to location }
-                    ?.takeNonEmpty()
-                    ?.let { (user, location) ->
+                    ?.let { location ->
                         location.id?.let { reviewRepository.findAllByLocationId(it) }
-                                ?.map { it.toModel(user.firstName, location.name) }
+                                ?.map { review ->
+                                    userRepository.findByIdOrNull(review.userId)
+                                            ?.let {
+                                                review.toModel(it.firstName, location.name)
+                                            }
+                                }
                     }?.let { Response("Reviews loaded successfully", it) }
                     ?: Response("Error on load reviews", emptyList())
 
     @PostMapping("/review/new")
-    fun addReview(@RequestBody review: ReviewModel) = review.toEntityOrNull()
+    fun addReview(@RequestBody review: AddReviewModel) = review.toEntityOrNull()
             ?.let { entity -> reviewRepository.save(entity) }?.toModelOrNull()
             ?.let { Response("Review added successfully", it) }
             ?: Response("Error on adding review")
@@ -85,8 +88,8 @@ class AppRestController(
     private fun LocationModel.toEntityOrNull(email: String) =
             userRepository.findByEmailIgnoreCase(email)?.id?.let { userId -> toEntity(userId) }
 
-    private fun ReviewModel.toEntityOrNull() =
-            (userRepository.findByEmailIgnoreCase(userName) to locationRepository.findByNameIgnoreCase(locationName))
+    private fun AddReviewModel.toEntityOrNull() =
+            (userRepository.findByEmailIgnoreCase(userEmail) to locationRepository.findByNameIgnoreCase(locationName))
                     .takeNonEmpty()
                     ?.let { (user, location) -> user.id to location.id }
                     ?.takeNonEmpty()
